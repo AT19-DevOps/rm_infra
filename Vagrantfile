@@ -6,9 +6,9 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "1024"
   end
-
   config.vm.provision :docker
-  config.vm.define "server-1" do |dockerserver|
+  config.vm.provision :docker_compose, yml: "/vagrant/docker-compose.yml", rebuild: true, run: "always"
+  config.vm.define "converter-1" do |dockerserver|
     dockerserver.vm.network "private_network", ip: '192.168.33.60'
     dockerserver.vm.hostname = "dockerserver"
   end
