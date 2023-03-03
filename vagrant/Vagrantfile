@@ -14,9 +14,11 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision :docker
+  config.vm.provision :docker_compose
   config.vm.provision :shell, path: "bootstrap.sh"
   config.vm.provision :file, source: "file.txt", destination: "file.txt"
   config.vm.provision :file, source: "dir1", destination: "dir1"
+
   config.vm.define "server-1" do |dockerserver|
     dockerserver.vm.network "private_network", ip: '192.168.33.60'
     dockerserver.vm.hostname = "dockerserver"
@@ -29,5 +31,8 @@ Vagrant.configure("2") do |config|
     dockerserver.vm.provision "docker" do |d|
       d.run "hello-world"
     end
+    
+    dockerserver.vm.provision :file, source:"../docker/docker-compose.ci.yml", destination:"docker-compose.yml"
+    dockerserver.vm.provision :docker_compose, yml:"/home/vagrant/docker-compose.yml", run:"always"
   end
 end
